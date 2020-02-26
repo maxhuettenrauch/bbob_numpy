@@ -23,10 +23,64 @@ from experiments.objective_functions.f_griewank_rosenbrock import GriewankRosenb
 from experiments.objective_functions.f_schwefel import Schwefel as f20
 from experiments.objective_functions.f_gallagher import Gallagher101 as f21
 from experiments.objective_functions.f_gallagher import Gallagher21 as f22
+from experiments.robotics.hole_reaching_objective import HoleReachingObjective as hro
+from experiments.robotics.planar_reaching_objective import ReachingObjective as ro
 
+from cma.bbobbenchmarks import nfreefunclasses
 
 # TODO: how to make this nicer?
-_all_objectives = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22]
+_all_objectives = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, hro, ro]
+
+
+def get_id_from_name(name: str):
+    if name.lower() == 'sphere':
+        return 0
+    elif name.lower() == 'ellipsoid':
+        return 1
+    elif name.lower() == 'rastrigin':
+        return 2
+    elif name.lower() == 'buecherastrigin':
+        return 3
+    elif name.lower() == 'linearslope':
+        return 4
+    elif name.lower() == 'attractivesector':
+        return 5
+    elif name.lower() == 'stepellipsoid':
+        return 6
+    elif name.lower() == 'rosenbrock':
+        return 7
+    elif name.lower() == 'rosenbrockrotated':
+        return 8
+    elif name.lower() == 'ellipsoidrotated':
+        return 9
+    elif name.lower() == 'discus':
+        return 10
+    elif name.lower() == 'bentcigar':
+        return 11
+    elif name.lower() == 'sharpridge':
+        return 12
+    elif name.lower() == 'differentpowers':
+        return 13
+    elif name.lower() == 'rastriginrotated':
+        return 14
+    elif name.lower() == 'weierstrass':
+        return 15
+    elif name.lower() == 'schaffersf7':
+        return 16
+    elif name.lower() == 'schaffersf7ill':
+        return 17
+    elif name.lower() == 'griewankrosenbrock':
+        return 18
+    elif name.lower() == 'schwefel':
+        return 19
+    elif name.lower() == 'gallagher101':
+        return 20
+    elif name.lower() == 'gallagher21':
+        return 21
+    elif name.lower() == 'katsuura':
+        return 22
+    elif name.lower() == 'lunacek':
+        return 23
 
 
 class Problem:
@@ -79,6 +133,12 @@ class Problem:
                 self.f_obj = f21(dim)
             elif name.lower() == 'gallagher21':
                 self.f_obj = f22(dim)
+            elif name.lower() == 'holereach5':
+                self.f_obj = hro(num_links=5)
+            elif name.lower() == 'holereach5_self':
+                self.f_obj = hro(num_links=5, allow_self_collision=True)
+            elif name.lower() == 'reach5':
+                self.f_obj = ro(num_links=5, via_points=({"t": 50, "vp": (1, 1)}, ))
             else:
                 raise ValueError('Unknown objective function')
         self.name = name
@@ -91,13 +151,16 @@ class Problem:
     def __str__(self):
         return str(self.f_obj)
 
+    def getfopt(self):
+        return self.f_obj.f_opt
+
     @property
-    def function_id(self):
+    def funId(self):
         return self.name + "_" + str(self.seed)
 
     @property
     def dim(self):
-        return self.f_obj.d
+        return self.f_obj.dim
 
     def f0(self, x):
         """ 0 centered optimal value"""
