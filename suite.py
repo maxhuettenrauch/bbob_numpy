@@ -25,6 +25,7 @@ from experiments.objective_functions.f_gallagher import Gallagher101 as f21
 from experiments.objective_functions.f_gallagher import Gallagher21 as f22
 from experiments.robotics.hole_reaching_objective import HoleReachingObjective as hro
 from experiments.robotics.planar_reaching_objective import ReachingObjective as ro
+from experiments.robotics.hole_reaching_objective import HoleReachingEnv as hro_par
 
 from cma.bbobbenchmarks import nfreefunclasses
 
@@ -134,7 +135,9 @@ class Problem:
             elif name.lower() == 'gallagher21':
                 self.f_obj = f22(dim)
             elif name.lower() == 'holereach5':
-                self.f_obj = hro(num_links=5)
+                self.f_obj = hro(num_links=5, learn_goal=True)
+            elif name.lower() == 'holereach5_par':
+                self.f_obj = hro_par("holereach", 4, learn_goal=True)
             elif name.lower() == 'holereach5_self':
                 self.f_obj = hro(num_links=5, allow_self_collision=True)
             elif name.lower() == 'reach5':
@@ -153,6 +156,13 @@ class Problem:
 
     def getfopt(self):
         return self.f_obj.f_opt
+
+    @property
+    def allow_parallel(self):
+        try:
+            return self.f_obj.allow_parallel
+        except AttributeError:
+            return False
 
     @property
     def funId(self):
