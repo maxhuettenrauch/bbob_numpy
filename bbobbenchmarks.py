@@ -397,9 +397,16 @@ class AbstractTestFunction(object):
         """
         if len(x.shape) > 1:
             self.n_evaluations += x.shape[0]
+            self.evaluations += x.shape[0]
         else:
             self.n_evaluations += 1
-        return self.evaluate(x)
+            self.evaluations += 1
+
+        y = self.evaluate(x)
+
+        if np.min(y) - self.getfopt() < 1e-8:
+            self.final_target_hit = True
+        return y
 
     def evaluate(self, x):
         """Returns the objective function value (in case noisy).
@@ -476,6 +483,8 @@ class BBOBFunction(AbstractTestFunction):
             setattr(self, i, v)
         self._xopt = None
         self.n_evaluations = 0
+        self.evaluations = 0
+        self.final_target_hit = False
 
     def shape_(self, x):
         # this part is common to all evaluate function
