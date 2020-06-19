@@ -23,11 +23,9 @@ from experiments.objective_functions.f_griewank_rosenbrock import GriewankRosenb
 from experiments.objective_functions.f_schwefel import Schwefel as f20
 from experiments.objective_functions.f_gallagher import Gallagher101 as f21
 from experiments.objective_functions.f_gallagher import Gallagher21 as f22
-from experiments.robotics.hole_reaching_objective import HoleReachingObjective as hro
-from experiments.robotics.planar_reaching_objective import ReachingObjective as ro
-from experiments.robotics.hole_reaching_objective import HoleReachingEnv as hro_par
-
-from cma.bbobbenchmarks import nfreefunclasses
+from experiments.robotics.planar.hole_reaching_objective import HoleReachingObjective as hro
+from experiments.robotics.planar.planar_reaching_objective import ReachingObjective as ro
+from experiments.robotics.planar.hole_reaching_objective import HoleReachingEnv as hro_par
 
 # TODO: how to make this nicer?
 _all_objectives = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, hro, ro]
