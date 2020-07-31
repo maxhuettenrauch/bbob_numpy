@@ -82,6 +82,8 @@ def get_id_from_name(name: str):
         return 23
     elif name.lower() == 'holereach5':
         return hro
+    elif name.lower() == 'holereach5_par':
+        return hro_par
 
 
 class Problem:
