@@ -412,7 +412,16 @@ class AbstractTestFunction(object):
         """Returns the objective function value (in case noisy).
 
         """
-        return self._evalfull(x)[0]
+
+        ftrue = self._evalfull(x)[0]
+
+        if self.step:
+            if len(x.shape) > 1:
+                ftrue = np.where(np.any(x[:, 0:self.dim-1] > 0, axis=1), ftrue + 100, ftrue)
+            else:
+                if np.any(x[0:self.dim-1] > 0):
+                    ftrue = ftrue + 100
+        return ftrue
     # TODO: is it better to leave evaluate out and check for hasattr('evaluate') in ExpLogger?
 
     def _evalfull(self, x):
@@ -676,6 +685,7 @@ class _FSphere(BBOBFunction):
 
         # COMPUTATION core
         ftrue = np.sum(x**2, -1)
+
         fval = self.noise(ftrue)
 
         # FINALIZE
