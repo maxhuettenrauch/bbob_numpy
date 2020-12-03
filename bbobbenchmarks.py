@@ -206,7 +206,7 @@ def compute_rotation(seed, dim):
         B[i] = B[i] / (np.sum(B[i]**2) ** .5)
     return B
 
-def monotoneTFosc(f):
+def monotoneTFosc(f, osz_fac=0.49):
     """Maps [-inf,inf] to [-inf,inf] with different constants
     for positive and negative part.
 
@@ -214,20 +214,20 @@ def monotoneTFosc(f):
     if np.isscalar(f):
         if f > 0.:
             f = np.log(f) / 0.1
-            f = np.exp(f + 0.49 * (np.sin(f) + np.sin(0.79 * f))) ** 0.1
+            f = np.exp(f + osz_fac * (np.sin(f) + np.sin(0.79 * f))) ** 0.1
         elif f < 0.:
             f = np.log(-f) / 0.1
-            f = -np.exp(f + 0.49 * (np.sin(0.55 * f) + np.sin(0.31 * f))) ** 0.1
+            f = -np.exp(f + osz_fac * (np.sin(0.55 * f) + np.sin(0.31 * f))) ** 0.1
         return f
     else:
         f = np.asarray(f)
         g = f.copy()
         idx = (f > 0)
         g[idx] = np.log(f[idx]) / 0.1
-        g[idx] = np.exp(g[idx] + 0.49 * (np.sin(g[idx]) + np.sin(0.79 * g[idx])))**0.1
+        g[idx] = np.exp(g[idx] + osz_fac * (np.sin(g[idx]) + np.sin(0.79 * g[idx])))**0.1
         idx = (f < 0)
         g[idx] = np.log(-f[idx]) / 0.1
-        g[idx] = -np.exp(g[idx] + 0.49 * (np.sin(0.55 * g[idx]) + np.sin(0.31 * g[idx])))**0.1
+        g[idx] = -np.exp(g[idx] + osz_fac * (np.sin(0.55 * g[idx]) + np.sin(0.31 * g[idx])))**0.1
         return g
 
 def defaultboundaryhandling(x, fac):
@@ -946,6 +946,7 @@ class F6(BBOBNfreeFunction):
     funId = 6
     condition = 10.
     alpha = 100.
+    osz_fac = 0.49
 
     def initwithsize(self, curshape, dim):
         # DIM-dependent initialization
@@ -981,7 +982,7 @@ class F6(BBOBNfreeFunction):
         # COMPUTATION core
         idx = (x * self.arrxopt) > 0
         x[idx] = self.alpha * x[idx]
-        ftrue = monotoneTFosc(np.sum(x**2, -1)) ** .9
+        ftrue = monotoneTFosc(np.sum(x**2, -1), self.osz_fac) ** .9
         fval = self.noise(ftrue)
 
         # FINALIZE
